@@ -20,10 +20,19 @@ public class GreetingRouter {
         RouterFunction.andOther() would execute secondary function if prior return no result.
         RouterFunction.andNest() returns composite routing function.
         */
+
+        /*
         return RouterFunctions
                 .route(GET("/hello").and(accept(MediaType.APPLICATION_JSON)), greetingHandler::hello)
                 .andRoute(POST("/hello").and(accept(MediaType.APPLICATION_JSON)), greetingHandler::helloWithContent)
                 .andRoute(POST("/helloReversed").and(accept(MediaType.APPLICATION_JSON)), greetingHandler::helloWithContentReversed);
+        */
+
+        return RouterFunctions.route()
+                .GET("/hello", accept(MediaType.APPLICATION_JSON), greetingHandler::hello)
+                .POST("/hello", accept(MediaType.APPLICATION_JSON), greetingHandler::helloWithContent)
+                .POST("/helloReversed", accept(MediaType.APPLICATION_JSON), greetingHandler::helloWithContentReversed)
+                .build();
     }
 
 }
