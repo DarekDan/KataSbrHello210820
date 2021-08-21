@@ -15,10 +15,15 @@ from [Building a Reactive RESTful Web Service](https://spring.io/guides/gs/react
 
 Spring Boot is quite opinionated how things ought to be done.
 
-### Check the date of the article
+#### Always check the date of the article
 
 This [article](https://spring.io/blog/2016/09/22/new-in-spring-5-functional-web-framework), although quite fun reading,
 has invalid code samples.
+
+#### Functional Endpoints
+
+This [anchor](https://docs.spring.io/spring-framework/docs/current/reference/html/web-reactive.html#webflux-fn)
+demonstrates how to create routing functions.
 
 #### Error handling comes "free"
 
