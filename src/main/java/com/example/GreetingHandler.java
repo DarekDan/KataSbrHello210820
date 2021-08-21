@@ -23,6 +23,11 @@ public class GreetingHandler {
 
     public Mono<ServerResponse> helloWithContentReversed(ServerRequest request) {
         var greeting = request.body(BodyExtractors.toMono(Greeting.class));
-        return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromProducer(greeting.map(m -> new Greeting(StringUtils.reverse(m.getMessage()))), Greeting.class));
+        return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromProducer(greeting.map(m -> {
+                    if (m.getMessage() == null)
+                        throw new GreetingException(GreetingException.MESSAGE_MUST_NOT_BE_NULL_TO_BE_REVERSED);
+                    return new Greeting(StringUtils.reverse(m.getMessage()));
+                }), Greeting.class));
     }
 }

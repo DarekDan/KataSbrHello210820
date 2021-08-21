@@ -51,4 +51,19 @@ class GreetingRouterTests {
                 .expectStatus().isOk()
                 .expectBody(Greeting.class).value(greeting -> assertThat(greeting.getMessage()).isEqualTo(StringUtils.reverse(message)));
     }
+
+    @Test
+    void testHelloReversedNameWithNull() {
+        webTestClient.post().uri("/helloReversed").body(BodyInserters.fromValue(new Greeting()))
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().is5xxServerError();
+
+        // Server must not crash
+        webTestClient.post().uri("/helloReversed").body(BodyInserters.fromValue(new Greeting("Anything")))
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk();
+
+    }
 }
