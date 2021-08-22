@@ -42,4 +42,9 @@ could not be simpler.
 #### You can hit the endpoint with extra properties
 
 Hitting `/hello` with a JSON payload that includes extra properties will succeed, as demonstrated by
-the `testHelloNamePlus` test. 
+the `testHelloNamePlus` test.
+
+#### PIOMIN does excellent work
+
+Simple way to add request and response
+logging [just add the reactive dependency](https://piotrminkowski.com/2019/10/15/reactive-logging-with-spring-webflux-and-logstash/)
