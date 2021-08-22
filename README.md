@@ -37,4 +37,9 @@ Just look at it, three lines of code, including the `@Autowired` WebClient and o
 #### Body Inserters and Extractors are scary useful
 
 Need to produce a `Mono<T>` from the received request? Or produce a body from a long-running independent thread? Life
-could not be simpler. 
+could not be simpler.
+
+#### You can hit the endpoint with extra properties
+
+Hitting `/hello` with a JSON payload that includes extra properties will succeed, as demonstrated by
+the `testHelloNamePlus` test. 

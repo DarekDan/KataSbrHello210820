@@ -66,4 +66,14 @@ class GreetingRouterTests {
                 .expectStatus().isOk();
 
     }
+
+    @Test
+    void testHelloNamePlus() {
+        final String message = "Hello, Darek+.";
+        webTestClient.post().uri("/hello").body(BodyInserters.fromValue(new GreetingPlus(message)))
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Greeting.class).value(greeting -> assertThat(greeting.getMessage()).isEqualTo(message));
+    }
 }
