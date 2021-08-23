@@ -48,3 +48,10 @@ the `testHelloNamePlus` test.
 
 Simple way to add request and response
 logging [just add the reactive dependency](https://piotrminkowski.com/2019/10/15/reactive-logging-with-spring-webflux-and-logstash/)
+```xml
+        <dependency>
+            <groupId>com.github.piomin</groupId>
+            <artifactId>reactive-logstash-logging-spring-boot-starter</artifactId>
+            <version>1.3.0.RELEASE</version>
+        </dependency>
+```
