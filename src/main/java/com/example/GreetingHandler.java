@@ -26,7 +26,7 @@ public class GreetingHandler {
 
         return greeting.flatMap(m -> {
             if (m.getMessage() == null)
-                return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON).bodyValue(GreetingException.GreetingError.of(GreetingException.MESSAGE_MUST_NOT_BE_NULL_TO_BE_REVERSED));
+                return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON).bodyValue(GreetingError.of(GreetingException.MESSAGE_MUST_NOT_BE_NULL_TO_BE_REVERSED));
             return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(new Greeting(StringUtils.reverse(m.getMessage())));
         });
 /*
