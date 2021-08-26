@@ -54,7 +54,7 @@ class GreetingRouterTests {
         webTestClient.post().uri("/helloReversed").body(BodyInserters.fromValue(new Greeting()))
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
-                .expectStatus().is5xxServerError();
+                .expectStatus().is4xxClientError();
 
         // Server must not crash
         webTestClient.post().uri("/helloReversed").body(BodyInserters.fromValue(new Greeting("Anything")))
