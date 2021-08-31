@@ -3,6 +3,8 @@ package com.example;
 public class GreetingError {
     private String error;
 
+    private GreetingError(){}
+
     public static GreetingError of(String errorMessage) {
         GreetingError ge = new GreetingError();
         ge.setError(errorMessage);
