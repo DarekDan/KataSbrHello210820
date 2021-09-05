@@ -55,3 +55,19 @@ logging [just add the reactive dependency](https://piotrminkowski.com/2019/10/15
             <version>1.3.0.RELEASE</version>
         </dependency>
 ```
+
+### Docker and K8s 
+
+#### To build a Docker image
+
+Create a `Docker` file with the proper packaging options (i.e. source image) then run:
+```shell
+docker build -t kata-sbr-hello:210820 .
+```
+
+The `-t` parameter allows for the image to be tagged, including a version spec after the `:`.
+
+[How to build a SpringBoot Docker image](https://spring.io/guides/gs/spring-boot-docker/)
+
+#### To deploy a Docker image into K8s cluster
+
