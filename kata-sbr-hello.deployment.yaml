@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+# Information about the deployment
+metadata:
+  name: kata-sbr-hello
+  labels:
+    app: kata-sbr-hello-api
+    tier: api
+# Specification of the deployment
+spec:
+  replicas: 3
+# Selector of the pod template (as the templates might be in another file or section)
+  selector:
+    matchLabels:
+      app: kata-sbr-hello-api
+# Template to be used
+  template:
+    metadata:
+      labels:
+        app: kata-sbr-hello-api
+# Specification of the containers to be used for the template
+    spec:
+      containers:
+      - name: kata-sbr-hello-api
+        image: kata-sbr-hello:210820
+        ports:
+          - containerPort: 8080
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: kata-sbr-hello-lb
+spec:
+  type: LoadBalancer
+  selector:
+    app: kata-sbr-hello-api
+  ports:
+    - port: 8088
+      targetPort: 8080
+      name: 8080-8088-redirect

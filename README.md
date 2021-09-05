@@ -71,3 +71,27 @@ The `-t` parameter allows for the image to be tagged, including a version spec a
 
 #### To deploy a Docker image into K8s cluster
 
+Create a K8s deployment file specifying the Docker image to be used in the pod template 
+definitions. Do not forget to create a load-balancing service, which will distribute the requests across
+3 (or more) pods. Be mindful of the selectors to be able to match selectable objects.  
+Deploy to K8s cluster using:
+```shell
+kubectl apply -f kata-sbr-hello.deployment.yaml
+```
+
+Note that ZSH has a decent extension for docker and K8s. the above command is aliased to:
+```shell
+kaf kata-sbr-hello.deployment.yaml
+```
+
+To get status, issue `kubectl get all` or `kga` (ZSH). To delete the deployment
+```shell
+kubectl delete -f kata-sbr-hello.deployment.yaml
+```
+or (ZSH)
+```shell
+kdelf kata-sbr-hello.deployment.yaml
+```
+
+After deployment, use `curl http://localhost:8088/hello --verbose --trace-time` 
+to test the service (verbose and trace-time options are optional).  
