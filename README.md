@@ -95,3 +95,26 @@ kdelf kata-sbr-hello.deployment.yaml
 
 After deployment, use `curl http://localhost:8088/hello --verbose --trace-time` 
 to test the service (verbose and trace-time options are optional).  
+To test a POST message with `curl` use:
+```shell
+curl http://localhost:8088/helloReversed --header "Content-Type: application/json" --request POST --data '{ "message": "Darek"}'
+```
+
+#### Testing K8s deployment with Gatling
+[Gatling](https://gatling.io/) is a load testing engine written in scala. To simplify, 
+from developer's perspective, only one dependency and one plugin is [needed](https://gatling.io/docs/gatling/reference/current/extensions/maven_plugin/). 
+The tests are written in [scala](https://www.scala-lang.org/), which runs on the JVM
+(Java Virtual Machine). The tests are separated into scenarios and a sample one, to test
+two APIs with random pause between them, have been created: `src/test/scala/GreetingSimulation.scala`. 
+
+To run the test 
+simply use:
+```shell
+mvn gatling:test
+```
+
+Please note that this is different from running unit tests using `@SpringBootTest` and might involve
+URLs that are not defined, nor part of the application you are working on. In the provided
+example we are testing the deployment created by the K8s deployment file. On a six-core i7
+macOS laptop, increasing the number of pods above three, did not provide the expected boost
+and resulted in large number of failures under load of 100,000 users ramped up over one minute.
