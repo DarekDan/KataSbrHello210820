@@ -40,12 +40,12 @@ public class GreetingHandler {
     }
 
     public Mono<ServerResponse> helloWithContentReversed(ServerRequest request) {
-        var greeting = request.body(BodyExtractors.toMono(Greeting.class)).doOnNext(this::validate);
-
-        return greeting.flatMap(m -> ok().bodyValue(greetingService.fromString(StringUtils.reverse(m.getMessage()))))
+        return request.body(BodyExtractors.toMono(Greeting.class))
+            .doOnNext(this::validate)
+            .flatMap(m -> ok().bodyValue(greetingService.fromString(StringUtils.reverse(m.getMessage()))))
             .onErrorResume(GreetingException.class, e -> badRequest().bodyValue(GreetingError.from(e)));
-
-        // Alternatives
+    }
+    // Alternatives
 
 /*      Leave error handling to SpringBoot
         return ok().body(BodyInserters.fromProducer(greeting.map(m -> greetingService.fromString(StringUtils.reverse(m.getMessage()))), Greeting.class));
@@ -67,7 +67,6 @@ public class GreetingHandler {
                     return new Greeting(StringUtils.reverse(m.getMessage()));
                 }), Greeting.class));
 */
-    }
 
     private void validate(Greeting greeting) {
         Errors errors = new BeanPropertyBindingResult(greeting, "greeting");
