@@ -1,6 +1,7 @@
 package com.example;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyExtractors;
@@ -12,8 +13,15 @@ import reactor.core.publisher.Mono;
 @Component
 public class GreetingHandler {
 
+    private GreetingService greetingService;
+
+    @Autowired
+    public GreetingHandler(GreetingService greetingService) {
+        this.greetingService = greetingService;
+    }
+
     public Mono<ServerResponse> hello(ServerRequest request) {
-        return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(new Greeting("Hello, Spring!")));
+        return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(greetingService.getDefault()));
     }
 
     public Mono<ServerResponse> helloWithContent(ServerRequest request) {
@@ -27,7 +35,7 @@ public class GreetingHandler {
         return greeting.flatMap(m -> {
             if (m.getMessage() == null)
                 return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON).bodyValue(GreetingError.of(GreetingException.MESSAGE_MUST_NOT_BE_NULL_TO_BE_REVERSED));
-            return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(new Greeting(StringUtils.reverse(m.getMessage())));
+            return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(greetingService.fromString(StringUtils.reverse(m.getMessage())));
         });
 /*
         return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
