@@ -1,21 +1,32 @@
 package com.example;
 
 public class GreetingError {
-    private String error;
+    private String[] errors;
+    private String message;
 
-    private GreetingError(){}
+    private GreetingError() {
+    }
 
-    public static GreetingError of(String errorMessage) {
+    public static GreetingError from(GreetingException exception) {
         GreetingError ge = new GreetingError();
-        ge.setError(errorMessage);
+        ge.setErrors(exception.getErrors());
+        ge.setMessage(exception.getLocalizedMessage());
         return ge;
     }
 
-    public String getError() {
-        return error;
+    public String getMessage() {
+        return message;
     }
 
-    private void setError(String error) {
-        this.error = error;
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String[] getErrors() {
+        return errors;
+    }
+
+    private void setErrors(String[] errors) {
+        this.errors = errors;
     }
 }

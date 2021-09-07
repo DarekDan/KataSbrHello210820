@@ -1,5 +1,6 @@
 package com.example;
 
+import static org.springframework.web.reactive.function.server.ServerResponse.badRequest;
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
 import org.apache.commons.lang3.StringUtils;
@@ -15,7 +16,6 @@ import org.springframework.web.reactive.function.BodyExtractors;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import org.springframework.web.server.ServerWebInputException;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -42,15 +42,24 @@ public class GreetingHandler {
     public Mono<ServerResponse> helloWithContentReversed(ServerRequest request) {
         var greeting = request.body(BodyExtractors.toMono(Greeting.class)).doOnNext(this::validate);
 
-        return ok().body(BodyInserters.fromProducer(greeting.doOnError(e -> logger.warn(e.getMessage(), e)).map(m -> greetingService.fromString(StringUtils.reverse(m.getMessage()))), Greeting.class));
-/*
+        return greeting.flatMap(m -> ok().bodyValue(greetingService.fromString(StringUtils.reverse(m.getMessage()))))
+            .onErrorResume(GreetingException.class, e -> badRequest().bodyValue(GreetingError.from(e)));
+
+        // Alternatives
+
+/*      Leave error handling to SpringBoot
+        return ok().body(BodyInserters.fromProducer(greeting.map(m -> greetingService.fromString(StringUtils.reverse(m.getMessage()))), Greeting.class));
+*/
+
+/*      Perform manual validation
         return greeting.flatMap(m -> {
             if (m.getMessage() == null)
                 return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON).bodyValue(GreetingError.of(GreetingException.MESSAGE_MUST_NOT_BE_NULL_TO_BE_REVERSED));
             return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(greetingService.fromString(StringUtils.reverse(m.getMessage())));
         });
 */
-/*
+
+/*      Perform manual validation, but leave handling to SpringBoot
         return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromProducer(greeting.map(m -> {
                     if (m.getMessage() == null)
@@ -58,14 +67,13 @@ public class GreetingHandler {
                     return new Greeting(StringUtils.reverse(m.getMessage()));
                 }), Greeting.class));
 */
-
     }
 
     private void validate(Greeting greeting) {
         Errors errors = new BeanPropertyBindingResult(greeting, "greeting");
         greetingValidator.validate(greeting, errors);
         if (errors.hasErrors()) {
-            throw new ServerWebInputException(errors.toString());
+            throw new GreetingException("Greeting validation failed", errors);
         }
     }
 }
