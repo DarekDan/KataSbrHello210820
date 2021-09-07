@@ -25,5 +25,5 @@ class GreetingSimulation extends Simulation {
       .post("/helloReversed")
       .body(StringBody("""{ "message": "Dariusz" }""")).asJson)
 
-  setUp(scn.inject(rampUsers(10000).during(1.minutes)).protocols(httpProtocol))
+  setUp(scn.inject(rampUsers(10000).during(30.seconds)).protocols(httpProtocol))
 }
