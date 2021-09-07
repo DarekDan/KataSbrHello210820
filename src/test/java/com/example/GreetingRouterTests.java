@@ -2,16 +2,22 @@ package com.example;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
+import java.nio.charset.StandardCharsets;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = "spring.main.web-application-type=reactive")
 class GreetingRouterTests {
+
+    Logger log = LoggerFactory.getLogger(GreetingRouterTests.class);
 
     @Autowired
     private WebTestClient webTestClient;
@@ -54,13 +60,15 @@ class GreetingRouterTests {
         webTestClient.post().uri("/helloReversed").body(BodyInserters.fromValue(new Greeting()))
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
-                .expectStatus().is4xxClientError();
+                .expectStatus().is4xxClientError().expectBody()
+                .consumeWith(result -> log.info(new String(result.getResponseBody(), StandardCharsets.UTF_8)));
 
         // Server must not crash
         webTestClient.post().uri("/helloReversed").body(BodyInserters.fromValue(new Greeting("Anything")))
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
-                .expectStatus().isOk();
+                .expectStatus().isOk().expectBody()
+                .consumeWith(result -> log.info(new String(result.getResponseBody(), StandardCharsets.UTF_8)));
 
     }
 
