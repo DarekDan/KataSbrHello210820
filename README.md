@@ -1,6 +1,7 @@
 # Getting Started
+This project is a programming kata with Spring Boot WebFlux. 
 
-### Reference Documentation
+## Reference Documentation
 
 For further reference, please consider the following sections:
 
@@ -11,40 +12,72 @@ For further reference, please consider the following sections:
 Extended kata example
 from [Building a Reactive RESTful Web Service](https://spring.io/guides/gs/reactive-rest-service/#scratch)
 
-### Learned lessons
+## Learned lessons
 
 Spring Boot is quite opinionated how things ought to be done.
 
-#### Always check the date of the article
+### Always check the date of the article
 
 This [article](https://spring.io/blog/2016/09/22/new-in-spring-5-functional-web-framework), although quite fun reading,
 has invalid code samples.
 
-#### Functional Endpoints
+### Functional Endpoints
 
 This [anchor](https://docs.spring.io/spring-framework/docs/current/reference/html/web-reactive.html#webflux-fn)
 demonstrates how to create routing functions.
 
-#### Error handling comes "free"
+### Error handling
 
+#### Handling errors by throwing RunTime exception
 We don't have to capture and handle errors on the API. If you don't like the action, throw a RuntimeException and let
-the system deal with the outcome.
+the system deal with the outcome. While this method is convenient, we lose control over the HTTP status returned, 
+and it will always be 500, which usually is not desirable.  
 
-#### Unit testing with `@SpringBootTest` is da bomb
+#### Handling errors by capturing any data quality or processing issues
+While this method allows us to control HTTP Status and content returned, quite often it brings business rules into the
+controller or request handler code. This results in violating separation of concerns and makes the code harder to migrate 
+in the future.
+
+#### Handling errors with Validators and Exception handlers
+This method provides the most control over the results returned by the API and separates business logic from the controller
+code, while observing the reactive programming style.
+```java
+public Mono<ServerResponse> helloWithContentReversed(ServerRequest request) {
+    return request.body(BodyExtractors.toMono(Greeting.class))
+        .doOnNext(this::validate)
+        .flatMap(m -> ok().bodyValue(greetingService.fromString(StringUtils.reverse(m.getMessage()))))
+        .onErrorResume(GreetingException.class, e -> badRequest().bodyValue(GreetingError.from(e)));
+}
+
+private void validate(Greeting greeting) {
+    Errors errors = new BeanPropertyBindingResult(greeting, "greeting");
+    greetingValidator.validate(greeting, errors);
+    if (errors.hasErrors()) {
+        throw new GreetingException("Greeting validation failed", errors);
+    }
+}
+```
+This approach allows us to invoke a business rules validation from a dedicated  business class and return API specific status 
+code and customized response content. The API will return:
+* HTTP 200 OK with result of processing supplied data
+* HTTP 400 BAD REQUEST if the supplied data was invalid
+* HTTP 500 in all other error scenarios
+
+### Unit testing with `@SpringBootTest` is da bomb
 
 Just look at it, three lines of code, including the `@Autowired` WebClient and off you go on a random port.
 
-#### Body Inserters and Extractors are scary useful
+### Body Inserters and Extractors are scary useful
 
 Need to produce a `Mono<T>` from the received request? Or produce a body from a long-running independent thread? Life
 could not be simpler.
 
-#### You can hit the endpoint with extra properties
+### You can hit the endpoint with extra properties
 
 Hitting `/hello` with a JSON payload that includes extra properties will succeed, as demonstrated by
 the `testHelloNamePlus` test.
 
-#### PIOMIN does excellent work
+### PIOMIN does excellent work
 
 Simple way to add request and response
 logging [just add the reactive dependency](https://piotrminkowski.com/2019/10/15/reactive-logging-with-spring-webflux-and-logstash/)
@@ -56,9 +89,9 @@ logging [just add the reactive dependency](https://piotrminkowski.com/2019/10/15
         </dependency>
 ```
 
-### Docker and K8s 
+## Docker and K8s 
 
-#### To build a Docker image
+### To build a Docker image
 
 Create a `Docker` file with the proper packaging options (i.e. source image) then run:
 ```shell
@@ -69,7 +102,7 @@ The `-t` parameter allows for the image to be tagged, including a version spec a
 
 [How to build a SpringBoot Docker image](https://spring.io/guides/gs/spring-boot-docker/)
 
-#### To deploy a Docker image into K8s cluster
+### To deploy a Docker image into K8s cluster
 
 Create a K8s deployment file specifying the Docker image to be used in the pod template 
 definitions. Do not forget to create a load-balancing service, which will distribute the requests across
@@ -100,7 +133,7 @@ To test a POST message with `curl` use:
 curl http://localhost:8088/helloReversed --header "Content-Type: application/json" --request POST --data '{ "message": "Darek"}'
 ```
 
-#### Testing K8s deployment with Gatling
+### Testing K8s deployment with Gatling
 [Gatling](https://gatling.io/) is a load testing engine written in scala. To simplify, 
 from developer's perspective, only one dependency and one plugin is [needed](https://gatling.io/docs/gatling/reference/current/extensions/maven_plugin/). 
 The tests are written in [scala](https://www.scala-lang.org/), which runs on the JVM
