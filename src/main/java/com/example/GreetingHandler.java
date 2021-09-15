@@ -3,15 +3,11 @@ package com.example;
 import static org.springframework.web.reactive.function.server.ServerResponse.badRequest;
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 import org.springframework.web.reactive.function.BodyExtractors;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -22,7 +18,6 @@ import reactor.core.publisher.Mono;
 public class GreetingHandler {
 
     private final GreetingService greetingService;
-    private final Validator greetingValidator = new GreetingValidator();
     Logger logger = LoggerFactory.getLogger(GreetingHandler.class);
 
     @Autowired
@@ -40,9 +35,8 @@ public class GreetingHandler {
     }
 
     public Mono<ServerResponse> helloWithContentReversed(ServerRequest request) {
-        return request.body(BodyExtractors.toMono(Greeting.class))
-            .doOnNext(this::validate)
-            .flatMap(m -> ok().bodyValue(greetingService.fromString(StringUtils.reverse(m.getMessage()))))
+        return request.body(BodyExtractors.toMono(String.class))
+            .flatMap(m -> ok().bodyValue(greetingService.process(m)))
             .onErrorResume(GreetingException.class, e -> badRequest().bodyValue(GreetingError.from(e)));
     }
     // Alternatives
@@ -69,10 +63,5 @@ public class GreetingHandler {
 */
 
     private void validate(Greeting greeting) {
-        Errors errors = new BeanPropertyBindingResult(greeting, "greeting");
-        greetingValidator.validate(greeting, errors);
-        if (errors.hasErrors()) {
-            throw new GreetingException("Greeting validation failed", errors);
-        }
     }
 }

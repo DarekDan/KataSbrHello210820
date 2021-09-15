@@ -18,6 +18,6 @@ public class GreetingException extends ResponseStatusException {
 
     public String[] getErrors() {
         if (errors == null || !errors.hasErrors()) return new String[]{};
-        return errors.getAllErrors().stream().map(m -> m.getCodes().length == 0 ? "Unknown" : m.getCodes()[m.getCodes().length - 1]).toArray(String[]::new);
+        return errors.getAllErrors().stream().map(m -> m.getCodes() == null || m.getCodes().length == 0 ? "Unknown" : m.getCodes()[m.getCodes().length - 1]).toArray(String[]::new);
     }
 }

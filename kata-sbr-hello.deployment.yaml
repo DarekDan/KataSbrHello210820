@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: kata-sbr-hello-api
-        image: kata-sbr-hello:210820
+        image: kata-sbr-hello:210903
         ports:
           - containerPort: 8080
 
