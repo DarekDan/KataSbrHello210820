@@ -1,5 +1,7 @@
 package com.example;
 
+import com.example.model.Greeting;
+import com.example.model.GreetingPlus;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

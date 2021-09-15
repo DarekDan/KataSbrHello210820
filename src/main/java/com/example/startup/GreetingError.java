@@ -1,4 +1,6 @@
-package com.example;
+package com.example.startup;
+
+import com.example.service.GreetingException;
 
 public class GreetingError {
     private String[] errors;

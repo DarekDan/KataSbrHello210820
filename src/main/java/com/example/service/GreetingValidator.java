@@ -1,5 +1,6 @@
-package com.example;
+package com.example.service;
 
+import com.example.model.Greeting;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;

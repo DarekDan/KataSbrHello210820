@@ -1,4 +1,6 @@
-package com.example;
+package com.example.service;
+
+import com.example.model.Greeting;
 
 public interface GreetingService {
     Greeting getDefault();

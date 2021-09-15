@@ -1,4 +1,4 @@
-package com.example;
+package com.example.service;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
