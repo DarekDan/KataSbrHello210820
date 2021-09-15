@@ -5,7 +5,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.server.ResponseStatusException;
 
 public class GreetingException extends ResponseStatusException {
-    private Errors errors = null;
+    private final transient Errors errors;
 
     public GreetingException(HttpStatus status, String message, Errors errors) {
         super(status, message);

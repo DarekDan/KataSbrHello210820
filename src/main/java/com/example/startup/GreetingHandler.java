@@ -3,11 +3,9 @@ package com.example.startup;
 import static org.springframework.web.reactive.function.server.ServerResponse.badRequest;
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
-import com.example.service.GreetingException;
 import com.example.model.Greeting;
+import com.example.service.GreetingException;
 import com.example.service.GreetingService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -21,7 +19,6 @@ import reactor.core.publisher.Mono;
 public class GreetingHandler {
 
     private final GreetingService greetingService;
-    Logger logger = LoggerFactory.getLogger(GreetingHandler.class);
 
     @Autowired
     public GreetingHandler(GreetingService greetingService) {
@@ -65,6 +62,4 @@ public class GreetingHandler {
                 }), Greeting.class));
 */
 
-    private void validate(Greeting greeting) {
-    }
 }
