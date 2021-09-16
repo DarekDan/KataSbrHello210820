@@ -149,6 +149,8 @@ with the latest version of a successful build.
 
 [Fabric8io plug-in documentation](https://dmp.fabric8.io/)
 
+[Using Docker from Maven](https://codefresh.io/howtos/using-docker-maven-maven-docker/)
+
 ### To deploy a Docker image into K8s cluster
 
 Create a K8s deployment file specifying the Docker image to be used in the pod template 
