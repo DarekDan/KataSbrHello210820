@@ -91,7 +91,7 @@ logging [just add the reactive dependency](https://piotrminkowski.com/2019/10/15
 
 ## Docker and K8s 
 
-### To build a Docker image
+### Building Docker image with Dockerfile
 
 Create a `Docker` file with the proper packaging options (i.e. source image) then run:
 ```shell
@@ -101,6 +101,53 @@ docker build -t kata-sbr-hello:210820 .
 The `-t` parameter allows for the image to be tagged, including a version spec after the `:`.
 
 [How to build a SpringBoot Docker image](https://spring.io/guides/gs/spring-boot-docker/)
+
+### Building Docker image with Fabric8io Maven plug-in
+The Fabric8io plugin allows to build a docker image while leveraging unique Maven option, like artifact names and version
+specified in the `pom.xml` file.
+
+Sample plugin configuration
+```xml
+<plugin>
+    <groupId>io.fabric8</groupId>
+    <artifactId>docker-maven-plugin</artifactId>
+    <version>0.37.0</version>
+    <configuration>
+        <images>
+            <image>
+                <name>darekdan/${project.artifactId}</name>
+                <build>
+                    <from>adoptopenjdk:11-jre-openj9</from>
+                    <tags>
+                        <tag>latest</tag>
+                        <tag>${project.version}</tag>
+                    </tags>
+                    <ports>
+                        <port>8080</port>
+                    </ports>
+                    <entryPoint>
+                        <exec>
+                            <arg>java</arg>
+                            <arg>-jar</arg>
+                            <arg>/app/${project.artifactId}-${project.version}.jar</arg>
+                        </exec>
+                    </entryPoint>
+                    <assemblies>
+                        <assembly>
+                            <descriptorRef>artifact</descriptorRef>
+                            <targetDir>/app</targetDir>
+                        </assembly>
+                    </assemblies>
+                </build>
+            </image>
+        </images>
+    </configuration>
+</plugin>
+```
+This simplifies the Docker image creation as one has to invoke only `mvn docker:build` to get local catalog refreshed 
+with the latest version of a successful build.  
+
+[Fabric8io plug-in documentation](https://dmp.fabric8.io/)
 
 ### To deploy a Docker image into K8s cluster
 
