@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: kata-sbr-hello-api
-        image: kata-sbr-hello:210903
+        image: darekdan/kata-spring-boot-reactive-hello:latest
         ports:
           - containerPort: 8080
 
