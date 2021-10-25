@@ -6,6 +6,7 @@ import static org.springframework.web.reactive.function.server.ServerResponse.ok
 import com.example.model.Greeting;
 import com.example.service.GreetingException;
 import com.example.service.GreetingService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -16,12 +17,14 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
 @Component
+@Slf4j
 public class GreetingHandler {
 
     private final GreetingService greetingService;
 
     @Autowired
     public GreetingHandler(GreetingService greetingService) {
+        log.info("GreetingsHandler constructed");
         this.greetingService = greetingService;
     }
 
@@ -35,7 +38,8 @@ public class GreetingHandler {
     }
 
     public Mono<ServerResponse> helloWithContentReversed(ServerRequest request) {
-        return request.body(BodyExtractors.toMono(String.class))
+        return request
+            .body(BodyExtractors.toMono(String.class))
             .flatMap(m -> ok().bodyValue(greetingService.process(m)))
             .onErrorResume(GreetingException.class, e -> badRequest().bodyValue(GreetingError.from(e)));
     }
